@@ -17,6 +17,6 @@ void loop()
   tela.setCursor(0,0);
   
   if(inicia(8)){
-    tela.print("Jogo comeca");
+    tela.print("Inicio de jogo");
   }
 }
