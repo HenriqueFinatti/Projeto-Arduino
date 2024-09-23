@@ -3,6 +3,7 @@
 LiquidCrystal tela(13, 12, 11,10, 9, 8);
 
 const int TAM = 5;
+const int TAM_PERGUNTAS = 2;
 
 const int BOTAO_INICIA = 3;
 const int BOTAO_ESQUERDO = 7;
@@ -14,6 +15,8 @@ const int LEDS_DIREITO = 4;
 const int BUZZER = 2;
 
 int leds[TAM];
+
+String perguntas[TAM_PERGUNTAS] = {"2 + 2 = 5?", "3 + 5 = 8?"};
 
 void setup()
 {
@@ -34,7 +37,7 @@ void loop()
 {	
   
   home();
-  
+  perrcorre_perguntas();
   if(inicia())
   {
     tela.clear();
@@ -234,4 +237,10 @@ int compara (){
             return 1;
         }
     }   
+}
+
+void perrcorre_perguntas(){
+  for(int i=0; i < TAM_PERGUNTAS; i++){
+    tela.print("%s \n",perguntas[i]);
+  }
 }
