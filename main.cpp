@@ -13,11 +13,14 @@ const int LEDS_DIREITO = 4;
 
 int leds[TAM];
 
+<<<<<<< HEAD
 
 
 
 
 
+=======
+>>>>>>> f0e75484b0961efdd21ef9df5e3b38514e46db81
 void setup()
 {
   pinMode(BOTAO_INICIA, INPUT_PULLUP);
@@ -57,7 +60,10 @@ void loop()
     
 
     
+
     
+    
+
   }
 }
 
@@ -105,6 +111,9 @@ void exibe_leds(){
     
     }
 }
+
+
+
 
 
 
