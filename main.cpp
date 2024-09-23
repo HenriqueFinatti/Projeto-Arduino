@@ -241,6 +241,6 @@ int compara (){
 
 void perrcorre_perguntas(){
   for(int i=0; i < TAM_PERGUNTAS; i++){
-    tela.print("%s \n",perguntas[i]);
+    tela.print(perguntas[i]);
   }
 }
