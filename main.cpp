@@ -2,7 +2,7 @@
 #include <stdlib.h>
 LiquidCrystal tela(13, 12, 11,10, 9, 8);
 
-const int TAM = 10;
+const int TAM = 5;
 
 const int BOTAO_INICIA = 3;
 const int BOTAO_ESQUERDO = 7;
@@ -11,16 +11,10 @@ const int BOTAO_DIREITO = 6;
 const int LEDS_ESQUERDO = 5;
 const int LEDS_DIREITO = 4;
 
+const int BUZZER = 2;
+
 int leds[TAM];
 
-<<<<<<< HEAD
-
-
-
-
-
-=======
->>>>>>> f0e75484b0961efdd21ef9df5e3b38514e46db81
 void setup()
 {
   pinMode(BOTAO_INICIA, INPUT_PULLUP);
@@ -60,13 +54,50 @@ void loop()
     
     tela.clear();
     tela.setCursor(0,0);
-
     tela.print("Sua vez agora.");
+
     delay(1000);
     
-    compara();
+    if(compara())
+    {
+      tela.clear();
+      tela.setCursor(0,0);
+      tela.print("Fase 2/3 : Perguntas");
+
+      musica_vitoria();
+
+    }
     delay(1000);
   }
+}
+
+
+
+
+
+void musica_vitoria (){
+  tone(BUZZER, 523);
+
+  delay(200);
+  noTone(BUZZER);
+
+  tone(BUZZER, 659);  
+
+  delay(200);
+  noTone(BUZZER);
+
+  tone(BUZZER, 784);  
+
+  delay(200);
+  noTone(BUZZER);
+
+  tone(BUZZER, 1046); 
+
+  delay(500);
+  noTone(BUZZER);
+
+  delay(1000);
+
 }
 
 void home(){
@@ -80,7 +111,8 @@ void home(){
 int inicia(){
   int botao_play = digitalRead(BOTAO_INICIA);
   
-  if(botao_play == LOW){
+  if(botao_play == LOW)
+  {
     digitalWrite(BOTAO_INICIA, HIGH);
     return 1;	
   }  
@@ -88,10 +120,9 @@ int inicia(){
 }
 
 void preenche_aleatorio(){
-  for(int i =0; i< TAM; i++){
+  for(int i =0; i< TAM; i++)
+  {
     leds[i] = 0+rand()%2;
-    
-  
   }
 }
 
@@ -114,7 +145,7 @@ void exibe_leds(){
     }
 }
 
-void compara (){
+int compara (){
 
   delay(1000);
   Serial.println("entrou no funcao");
@@ -122,72 +153,63 @@ void compara (){
   int valida[TAM];
   int cont = 0;
   
-
     while(true){
 
       if(digitalRead(BOTAO_ESQUERDO) == LOW)
       {
-        while(digitalRead(BOTAO_ESQUERDO) == LOW){
+        while(digitalRead(BOTAO_ESQUERDO) == LOW)
+        {
             digitalWrite(LEDS_ESQUERDO, HIGH);
         }
         delay(1000);
         digitalWrite(LEDS_ESQUERDO, LOW);
 
-        if(leds[cont] == 0){
+        if(leds[cont] == 0)
+        {
             cont++;
         }
-        else{
+        else
+        {
             tela.clear();
             tela.setCursor(0, 0);
             tela.print("Errou");
-            break;
+            return 0;
         }
       }
 
       if(digitalRead(BOTAO_DIREITO) == LOW)
       {
-        while(digitalRead(BOTAO_DIREITO) == LOW){
+        while(digitalRead(BOTAO_DIREITO) == LOW)
+        {
             digitalWrite(LEDS_DIREITO, HIGH);
         }
         delay(1000);
         digitalWrite(LEDS_DIREITO, LOW);
 
-        if(leds[cont] == 1){
+        if(leds[cont] == 1)
+        {
             cont++;
         }
-        else{
+        else
+        {
             tela.clear();
             tela.setCursor(0, 0);
             tela.print("Errou");
-            break;
+            return 0;
         }
 
       }
 
         delay(100);
 
-        //digitalWrite(BOTAO_DIREITO, HIGH);
-        //digitalWrite(LEDS_DIREITO, LOW);
-
-        //digitalWrite(BOTAO_ESQUERDO, HIGH);
-        //digitalWrite(LEDS_ESQUERDO, LOW);
-
-        if(cont == TAM){
+        if(cont == TAM)
+        {
             tela.clear();
             tela.setCursor(0,0);
             tela.print("CORRETO");
-            break;
-
+          	delay(1000);
+          
+            return 1;
         }
-    }
-
-    
+    }   
 }
-
-
-
-
-
-
-
-
