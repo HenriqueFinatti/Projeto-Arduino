@@ -31,6 +31,16 @@ void loop()
 {	
   
   home();
+
+  if(inicia())
+  {
+    tela.clear();
+    
+    tela.setCursor(0, 0);
+    tela.print("Fase 1/3 : Leds");
+    
+    delay(1000);
+  }
   
 }
 
@@ -40,4 +50,14 @@ void home(){
   
   tela.setCursor(0, 1);
   tela.print("Para comecar");
+}
+
+int inicia(){
+  int botao_play = digitalRead(BOTAO_INICIA);
+  
+  if(botao_play == LOW){
+    digitalWrite(BOTAO_INICIA, HIGH);
+    return 1;	
+  }  
+  return 0;
 }
