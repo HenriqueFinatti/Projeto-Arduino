@@ -67,6 +67,9 @@ void loop()
       musica_vitoria();
 
     }
+    else{
+      musica_derrota();
+    }
     delay(1000);
   }
 }
@@ -98,6 +101,25 @@ void musica_vitoria (){
 
   delay(1000);
 
+}
+
+void musica_derrota(){
+  tone(BUZZER, 294);
+
+  delay(500);
+  noTone(BUZZER);
+  
+  tone(BUZZER, 262);
+
+  delay(500);
+  noTone(BUZZER);
+  
+  tone(BUZZER, 220);
+
+  delay(1000);
+  noTone(BUZZER);
+  
+  delay(1000);
 }
 
 void home(){
