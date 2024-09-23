@@ -3,7 +3,6 @@
 LiquidCrystal tela(13, 12, 11,10, 9, 8);
 
 const int TAM = 10;
-int leds[TAM];
 
 const int BOTAO_INICIA = 3;
 const int BOTAO_ESQUERDO = 7;
@@ -11,6 +10,8 @@ const int BOTAO_DIREITO = 6;
 
 const int LEDS_ESQUERDO = 5;
 const int LEDS_DIREITO = 4;
+
+int leds[TAM];
 
 void setup()
 {
@@ -23,15 +24,15 @@ void setup()
   
   tela.begin(16, 2);
   Serial.begin(9600);
+  
 }
 
 
 void loop()
-
 {	
   
   home();
-
+  
   if(inicia())
   {
     tela.clear();
@@ -40,8 +41,13 @@ void loop()
     tela.print("Fase 1/3 : Leds");
     
     delay(1000);
+    
+    tela.setCursor(0, 0);
+    tela.print("Memorize os leds");
+    delay(1000);
+	
+    preenche_aleatorio();
   }
-  
 }
 
 void home(){
@@ -60,4 +66,12 @@ int inicia(){
     return 1;	
   }  
   return 0;
+}
+
+void preenche_aleatorio(){
+  for(int i =0; i< TAM; i++){
+    leds[i] = 0+rand()%2;
+    
+  
+  }
 }
