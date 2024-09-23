@@ -2,6 +2,8 @@
 #include <stdlib.h>
 LiquidCrystal tela(13, 12, 11,10, 9, 8);
 
+bool avalia_jogo_leds = false, avalia_jogo_perguntas = false, avalia_pergunta_final = false;
+
 const int TAM = 5;
 const int TAM_PERGUNTAS = 2;
 
@@ -38,49 +40,12 @@ void loop()
 {	
   
   home();
-  if(inicia())
-  {
-    tela.clear();
-    
-    tela.setCursor(0, 0);
-    tela.print("Fase 1/3 : Leds");
-    
-    delay(1000);
-    
-    tela.setCursor(0, 0);
-    tela.print("Memorize os leds");
-    delay(1000);
-	
-    preenche_aleatorio();
-    exibe_leds();
-    delay(1000);
-    
-    tela.clear();
-    tela.setCursor(0,0);
-    tela.print("Sua vez agora.");
+  
+  inicia();  
 
-    delay(1000);
-    
-    if(compara())
-    {
-      tela.clear();
-      tela.setCursor(0,0);
-      tela.print("Fase 2/3 : Perguntas");
-      musica_vitoria();
-      delay(4000);
-      perrcorre_perguntas();
-
-    }
-    else{
-      musica_derrota();
-    }
-    delay(1000);
-  }
+  jogo_leds();
+  
 }
-
-
-
-
 
 void musica_vitoria (){
   tone(BUZZER, 523);
@@ -134,15 +99,14 @@ void home(){
   tela.print("Para comecar");
 }
 
-int inicia(){
+void inicia(){
   int botao_play = digitalRead(BOTAO_INICIA);
   
   if(botao_play == LOW)
   {
     digitalWrite(BOTAO_INICIA, HIGH);
-    return 1;	
+    avalia_jogo_leds = true;
   }  
-  return 0;
 }
 
 void preenche_aleatorio(){
@@ -240,6 +204,12 @@ int compara (){
     }   
 }
 
+void limpa_tela()
+{
+  tela.clear();
+  tela.setCursor(0, 0);
+}
+
 void perrcorre_perguntas(){
   for(int i=0; i < TAM_PERGUNTAS; i++){
     tela.clear();
@@ -247,4 +217,59 @@ void perrcorre_perguntas(){
     tela.print(perguntas[i]);
     delay(10000);
   }
+}
+
+void derrota()
+{
+  musica_derrota();
+
+  avalia_jogo_leds = false;
+  avalia_jogo_perguntas = false; 
+  avalia_pergunta_final = false;
+}
+void jogo_leds()
+{
+  if(avalia_jogo_leds)
+  {
+    limpa_tela();
+    tela.print("Fase 1/3 : Leds");
+    
+    delay(1000);
+    
+    limpa_tela();
+    tela.print("Memorize os leds");
+
+    delay(1000);
+	
+    preenche_aleatorio();
+    exibe_leds();
+
+    delay(1000);
+    
+    limpa_tela();
+    tela.print("Sua vez agora.");
+
+    delay(1000);
+    
+    if(compara())
+    {
+      limpa_tela();
+      tela.print("Sucesso!");
+
+      musica_vitoria();
+      delay(4000);
+    }
+    else
+    {
+      derrota();
+    }
+    delay(1000);
+  
+  }
+}
+
+void jogo_perguntas()
+{
+  limpa_tela();
+  tela.print("Fase 2/3 : Perguntas");
 }
