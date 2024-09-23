@@ -157,11 +157,11 @@ void exibe_leds(){
     {
       if(leds[i] == 0)
       {
-        digitalWrite(5, HIGH);
+        digitalWrite(LEDS_ESQUERDO, HIGH);
       }
       else
       {
-        digitalWrite(4, HIGH);
+        digitalWrite(LEDS_DIREITO, HIGH);
       }
       delay(1000);
       digitalWrite(LEDS_DIREITO, LOW); 
