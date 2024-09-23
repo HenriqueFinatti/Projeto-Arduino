@@ -58,12 +58,14 @@ void loop()
     exibe_leds();
     delay(1000);
     
+    tela.clear();
+    tela.setCursor(0,0);
 
+    tela.print("Sua vez agora.");
+    delay(1000);
     
-
-    
-    
-
+    compara();
+    delay(1000);
   }
 }
 
@@ -112,7 +114,75 @@ void exibe_leds(){
     }
 }
 
+void compara (){
 
+  delay(1000);
+  Serial.println("entrou no funcao");
+  
+  int valida[TAM];
+  int cont = 0;
+  
+
+    while(true){
+
+      if(digitalRead(BOTAO_ESQUERDO) == LOW)
+      {
+        while(digitalRead(BOTAO_ESQUERDO) == LOW){
+            digitalWrite(LEDS_ESQUERDO, HIGH);
+        }
+        delay(1000);
+        digitalWrite(LEDS_ESQUERDO, LOW);
+
+        if(leds[cont] == 0){
+            cont++;
+        }
+        else{
+            tela.clear();
+            tela.setCursor(0, 0);
+            tela.print("Errou");
+            break;
+        }
+      }
+
+      if(digitalRead(BOTAO_DIREITO) == LOW)
+      {
+        while(digitalRead(BOTAO_DIREITO) == LOW){
+            digitalWrite(LEDS_DIREITO, HIGH);
+        }
+        delay(1000);
+        digitalWrite(LEDS_DIREITO, LOW);
+
+        if(leds[cont] == 1){
+            cont++;
+        }
+        else{
+            tela.clear();
+            tela.setCursor(0, 0);
+            tela.print("Errou");
+            break;
+        }
+
+      }
+
+        delay(100);
+
+        //digitalWrite(BOTAO_DIREITO, HIGH);
+        //digitalWrite(LEDS_DIREITO, LOW);
+
+        //digitalWrite(BOTAO_ESQUERDO, HIGH);
+        //digitalWrite(LEDS_ESQUERDO, LOW);
+
+        if(cont == TAM){
+            tela.clear();
+            tela.setCursor(0,0);
+            tela.print("CORRETO");
+            break;
+
+        }
+    }
+
+    
+}
 
 
 
