@@ -20,6 +20,7 @@ String perguntas[TAM_PERGUNTAS] = {"2 + 2 = 5?", "3 + 5 = 8?"};
 
 void setup()
 {
+  randomSeed(analogRead(0));
   pinMode(BOTAO_INICIA, INPUT_PULLUP);
   pinMode(BOTAO_DIREITO, INPUT_PULLUP);
   pinMode(BOTAO_ESQUERDO,INPUT_PULLUP);
@@ -37,7 +38,6 @@ void loop()
 {	
   
   home();
-  perrcorre_perguntas();
   if(inicia())
   {
     tela.clear();
@@ -66,8 +66,9 @@ void loop()
       tela.clear();
       tela.setCursor(0,0);
       tela.print("Fase 2/3 : Perguntas");
-
       musica_vitoria();
+      delay(4000);
+      perrcorre_perguntas();
 
     }
     else{
@@ -147,7 +148,7 @@ int inicia(){
 void preenche_aleatorio(){
   for(int i =0; i< TAM; i++)
   {
-    leds[i] = 0+rand()%2;
+    leds[i] = random(2);
   }
 }
 
@@ -241,6 +242,9 @@ int compara (){
 
 void perrcorre_perguntas(){
   for(int i=0; i < TAM_PERGUNTAS; i++){
+    tela.clear();
+    tela.setCursor(0,0);
     tela.print(perguntas[i]);
+    delay(10000);
   }
 }
