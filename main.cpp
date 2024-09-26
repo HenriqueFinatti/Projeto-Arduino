@@ -107,13 +107,13 @@ void jogo_perguntas()
 
     delay(2000);
 
-    perrcorre_perguntas();
+    percorre_perguntas();
   }
   
 }
 
-void perrcorre_perguntas(){
-  int valida_uso[TAM_PERGUNTAS];//criando vetor de verificacao das perguntas que ja foram selecionadas.
+void percorre_perguntas(){
+  int valida_uso[5];//criando vetor de verificacao das perguntas que ja foram selecionadas.
   int aux = 0;
   
   while(aux != 5)
@@ -163,7 +163,7 @@ void perrcorre_perguntas(){
             limpa_tela();
             tela.print("Errou!");
             //confirma = false;
-            aux = TAM_PERGUNTAS;
+            aux = 5;
             //avalia_jogo_perguntas = false;
             break;
           }
@@ -185,7 +185,7 @@ void perrcorre_perguntas(){
           else{
             limpa_tela();
             tela.print("Errou!");
-            aux = TAM_PERGUNTAS;
+            aux = 5;
             break;
           }
 
