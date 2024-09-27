@@ -1,3 +1,4 @@
+
 #include <LiquidCrystal.h>
 #include <stdlib.h>
 LiquidCrystal tela(13, 12, 11,10, 9, 8);
@@ -115,9 +116,11 @@ void jogo_perguntas()
 void percorre_perguntas(){
   int valida_uso[5];//criando vetor de verificacao das perguntas que ja foram selecionadas.
   int aux = 0;
+  int verifica_questoes_puladas =0;
   
   while(aux != 5)
   {
+    int tempo = 10;
     bool confirma = true;
     int pergunta = random(9); // nessa variavel armazenamos valores aleotrios entre 0 e 9.
     //Serial.println("Entrou no while ");
@@ -140,13 +143,23 @@ void percorre_perguntas(){
 
       tela.setCursor(0, 1);
       tela.print("Sim || Nao");
-      Serial.println("Entrou no if\n");
+      //Serial.println("Entrou no if\n");
+      //limpa_tela();
+      delay(2500);
       
 
       //nesse while true iremos, esperar o usuario selecionar a opcao de sim ou nao.
-      while (true)
+      while (tempo != -1)
       {
+        limpa_tela();
+        tela.print("Tempo: ");
+        tela.print(tempo);
+        tela.print(" s");
+        
+        delay(1000);
+
         if(digitalRead(BOTAO_ESQUERDO) == LOW){//quando o usuario clicar botao esquerdo
+          tempo =0;
           while(digitalRead(BOTAO_ESQUERDO) == LOW){//esse while funciona para se o usuario fica segurando o botao.
             digitalWrite(LEDS_ESQUERDO, HIGH);
           }
@@ -170,6 +183,7 @@ void percorre_perguntas(){
         }
 
         if(digitalRead(BOTAO_DIREITO) == LOW){//quando o usuario cliar no botao direito, referente ao botao não.
+          tempo =0;
           while(digitalRead(BOTAO_DIREITO) == LOW){//enquanto o usuario estiver clicando no botao, o led ficara acesso.
             digitalWrite(LEDS_DIREITO, HIGH);
           }
@@ -190,6 +204,24 @@ void percorre_perguntas(){
           }
 
         }
+
+        if(tempo == 0){
+          limpa_tela();
+          tela.setCursor(0,0);
+          tela.print("Questao pulada");
+          delay(1500);
+          tempo = 0;
+          verifica_questoes_puladas ++;
+          if(verifica_questoes_puladas > 1){
+            aux =5;
+            limpa_tela();
+            tela.print("Perdeu");
+            //delay(2000);
+          }
+
+        }
+        tempo --;
+        
         
       }
       
@@ -197,6 +229,11 @@ void percorre_perguntas(){
     }
 
   }
+
+  if(aux == 5){
+    avalia_pergunta_final = true;
+  }
+  
 
 }
 
