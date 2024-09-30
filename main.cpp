@@ -131,7 +131,7 @@ void musica_derrota(){
 void desiste_inicia(){
 
   if(contador == 0){
-    avalia_jogo_leds = true;
+    avalia_jogo_perguntas = true;
     contador = 1;
   }
   else{
@@ -227,10 +227,10 @@ void jogo_perguntas()
 
 void percorre_perguntas(){
   int valida_uso[5];//criando vetor de verificacao das perguntas que ja foram selecionadas.
-  int aux = 0;
+  int aux = 0, questoes_jogadas = 5;
   int verifica_questoes_puladas =0;
   
-  while(aux < 5 && avalia_jogo_perguntas == true)
+  while(aux < questoes_jogadas && avalia_jogo_perguntas == true)
   {
     int tempo = 10;
     bool confirma = true;
@@ -270,17 +270,20 @@ void percorre_perguntas(){
           while(digitalRead(BOTAO_ESQUERDO) == LOW){//esse while funciona para se o usuario fica segurando o botao.
             digitalWrite(LEDS_ESQUERDO, HIGH);
           }
-            digitalWrite(LEDS_ESQUERDO, HIGH);
-
-
           delay(500);
+          digitalWrite(LEDS_ESQUERDO, LOW);
           if(pergunta % 2 == 0){//Se o indice for par, significa que a resposta é "sim";
             limpa_tela();
 
             valida_uso[aux] = pergunta;
             aux++;
 
-            sprintf(mostra_sequencia, "Correto %d/%d", aux, 5);
+            if(verifica_questoes_puladas > 0){
+              sprintf(mostra_sequencia, "Correto %d/%d", aux-1, 5);
+            }
+            else{
+              sprintf(mostra_sequencia, "Correto %d/%d", aux, 5);
+            }
             tela.print(mostra_sequencia);
             tela.setCursor(0, 1);
             tela.print("*Sim || Nao");
@@ -302,10 +305,10 @@ void percorre_perguntas(){
         if(digitalRead(BOTAO_DIREITO) == LOW){//quando o usuario cliar no botao direito, referente ao botao não.
           tempo = 0;
           while(digitalRead(BOTAO_DIREITO) == LOW){//enquanto o usuario estiver clicando no botao, o led ficara acesso.
-             digitalWrite(BOTAO_DIREITO, HIGH);
+            digitalWrite(LEDS_DIREITO, HIGH);
           }
-           digitalWrite(BOTAO_DIREITO, HIGH);
           delay(500);
+          digitalWrite(LEDS_DIREITO, LOW);
 
           if(pergunta %2 != 0){
             limpa_tela();
@@ -313,7 +316,12 @@ void percorre_perguntas(){
             valida_uso[aux] = pergunta;
             aux++;
 
-            sprintf(mostra_sequencia, "Correto %d/%d", aux, 5);
+            if(verifica_questoes_puladas > 0){
+              sprintf(mostra_sequencia, "Correto %d/%d", aux-1, 5);
+            }
+            else{
+              sprintf(mostra_sequencia, "Correto %d/%d", aux, 5);
+            }
             tela.print(mostra_sequencia);
             tela.setCursor(0, 1);
             tela.print("Sim || *Nao");
@@ -339,9 +347,11 @@ void percorre_perguntas(){
           tempo = 0;
 
           valida_uso[aux] = pergunta;
+          
+          questoes_jogadas++;
           aux++;
-
           verifica_questoes_puladas ++;
+
           if(verifica_questoes_puladas > 1){
             aux = 10;
             limpa_tela();
@@ -360,7 +370,7 @@ void percorre_perguntas(){
 
   }
 
-  if(aux == 5){
+  if(aux == questoes_jogadas){
     avalia_pergunta_final = true;
   }
   
