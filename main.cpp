@@ -270,6 +270,7 @@ void exibe_leds(){
   {
     if(leds[i] == 0)
     {
+      
       digitalWrite(LEDS_ESQUERDO, HIGH);
     }
     else
