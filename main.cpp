@@ -6,7 +6,7 @@ bool avalia_jogo_leds = false, avalia_jogo_perguntas = false, avalia_pergunta_fi
 
 int contador = 0;
 
-const int TAM_LEDS = 10;
+const int TAM_LEDS = 5;
 const int TAM_PERGUNTAS = 10;
 
 const int BOTAO_INICIA = 3;
@@ -298,6 +298,7 @@ void percorre_perguntas(){
             aux = 5;
             //avalia_jogo_perguntas = false;
             break;
+            derrota();
           }
         }
 
@@ -333,6 +334,7 @@ void percorre_perguntas(){
             tela.setCursor(0, 1);
             tela.print("Sim || *Nao");
             aux = 10;
+            derrota();
             break;
           }
 
@@ -523,7 +525,7 @@ void pergunta_final(){
         while(digitalRead(BOTAO_ESQUERDO) == LOW){//esse while funciona para se o usuario fica segurando o botao.
            digitalWrite(LEDS_ESQUERDO, HIGH);
         }
-        digitalWrite(LEDS_ESQUERDO, HIGH);
+        digitalWrite(LEDS_ESQUERDO, LOW);
         delay(500);
 
         limpa_tela();
@@ -542,7 +544,7 @@ void pergunta_final(){
         while(digitalRead(BOTAO_DIREITO) == LOW){//enquanto o usuario estiver clicando no botao, o led ficara acesso.
            digitalWrite(LEDS_DIREITO, HIGH);
         }
-        digitalWrite(LEDS_DIREITO, HIGH);
+        digitalWrite(LEDS_DIREITO, LOW);
 
         delay(500);
 
