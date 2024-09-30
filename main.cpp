@@ -46,7 +46,7 @@ void setup()
   pinMode(LEDS_ESQUERDO, OUTPUT);
   pinMode(LEDS_DIREITO, OUTPUT);
   
-  attachInterrupt(digitalPinToInterrupt(BOTAO_INICIA), desiste, RISING);
+  attachInterrupt(digitalPinToInterrupt(BOTAO_INICIA), desiste_inicia, RISING);
 
   tela.begin(16, 2);
   Serial.begin(9600);
@@ -66,6 +66,110 @@ void loop()
 }
 
 
+void limpa_tela()
+{
+  tela.clear();
+  tela.setCursor(0, 0);
+}
+
+void musica_tempo_acabando() {
+  int notas[] = {523, 494, 466, 440, 415, 392};
+  int duracao = 300;
+
+  for (int i = 0; i < 6; i++) {
+    tone(BUZZER, notas[i]);
+    delay(duracao);
+    noTone(BUZZER);
+    delay(100);
+    duracao -= 30;
+  }
+
+}
+
+void musica_vitoria (){
+  tone(BUZZER, 523);
+
+  delay(200);
+  noTone(BUZZER);
+
+  tone(BUZZER, 659);  
+
+  delay(200);
+  noTone(BUZZER);
+
+  tone(BUZZER, 784);  
+
+  delay(200);
+  noTone(BUZZER);
+
+  tone(BUZZER, 1046); 
+
+  delay(500);
+  noTone(BUZZER);
+
+}
+
+void musica_derrota(){
+  tone(BUZZER, 294);
+
+  delay(500);
+
+  noTone(BUZZER);
+  tone(BUZZER, 262);
+
+  delay(500);
+
+  noTone(BUZZER);
+  tone(BUZZER, 220);
+
+  delay(1000);
+
+  noTone(BUZZER);
+  
+}
+
+void desiste_inicia(){
+
+  if(contador == 0){
+    avalia_jogo_leds = true;
+    contador = 1;
+  }
+  else{
+    musica_derrota();
+
+    limpa_tela();
+    tela.print("Desistiu");
+
+    avalia_jogo_leds = false;
+    avalia_jogo_perguntas = false;
+    avalia_pergunta_final = false;
+    contador = 0;
+  }
+}
+
+void derrota()
+{
+  musica_derrota();
+
+  limpa_tela();
+  tela.print("Errou");
+
+  avalia_jogo_leds = false;
+  avalia_jogo_perguntas = false; 
+  avalia_pergunta_final = false;
+}
+
+void vitoria()
+{
+  musica_vitoria();
+
+  limpa_tela();
+  tela.print("Sucesso!");
+
+  musica_vitoria();
+  delay(4000);
+
+}
 
 void jogo_leds()
 {
@@ -86,15 +190,16 @@ void jogo_leds()
     preenche_aleatorio();
     exibe_leds();
     
-    
-    
-    if(compara())
+    if(compara() && avalia_jogo_leds == true)
     {
       vitoria();
+      avalia_jogo_perguntas = true;
     }
     else
     {
-      derrota();
+      if(avalia_jogo_leds == true){
+        derrota();
+      }
     }
     delay(1000);
 
@@ -107,8 +212,12 @@ void jogo_perguntas()
   if(avalia_jogo_perguntas)
   {
     limpa_tela();
-    tela.print("Fase 2/3 : Perguntas");
 
+    tela.print("Fase 2/3 : Perguntas");
+    for(int i = 0; i < 13; i++){
+      delay(300);
+      tela.scrollDisplayLeft();
+    }
     delay(2000);
 
     percorre_perguntas();
@@ -126,17 +235,9 @@ void percorre_perguntas(){
     int tempo = 10;
     bool confirma = true;
     int pergunta = random(9); // nessa variavel armazenamos valores aleotrios entre 0 e 9.
-    //Serial.println("Entrou no while ");
-    Serial.print("Pergunta: ");
-    Serial.println(pergunta);
 
-    for(int j = 0; j < aux; j++){//verificando se a pergunta aletoria ja foi usada anteriormente.
-      if(valida_uso[j] == pergunta){
-          confirma = false;
-      }  
-      Serial.println("Printando o vetor:");
-      Serial.println(valida_uso[j]);
-       
+    for(int j = 0; j < aux; j++){
+      if(valida_uso[j] == pergunta) confirma = false;
     }  
 
     if(confirma)//se a pergunta nao foi usada printamos na tela, e preenchemos o vetor de verificacao.
@@ -146,11 +247,9 @@ void percorre_perguntas(){
 
       tela.setCursor(0, 1);
       tela.print("Sim || Nao");
-      //Serial.println("Entrou no if\n");
-      //limpa_tela();
+
       delay(2500);
       
-
       //nesse while true iremos, esperar o usuario selecionar a opcao de sim ou nao.
       while (tempo != -1 && avalia_jogo_perguntas == true)
       { 
@@ -169,19 +268,23 @@ void percorre_perguntas(){
         if(digitalRead(BOTAO_ESQUERDO) == LOW){//quando o usuario clicar botao esquerdo
           tempo = 0;
           while(digitalRead(BOTAO_ESQUERDO) == LOW){//esse while funciona para se o usuario fica segurando o botao.
-             digitalWrite(LEDS_ESQUERDO, HIGH);
+            digitalWrite(LEDS_ESQUERDO, HIGH);
           }
-             digitalWrite(LEDS_ESQUERDO, HIGH);
+            digitalWrite(LEDS_ESQUERDO, HIGH);
 
 
           delay(500);
           if(pergunta % 2 == 0){//Se o indice for par, significa que a resposta é "sim";
             limpa_tela();
-            tela.print("Acertou!");
-            tela.setCursor(0, 1);
-            tela.print("*Sim || Nao");
+
             valida_uso[aux] = pergunta;
             aux++;
+
+            sprintf(mostra_sequencia, "Correto %d/%d", aux, 5);
+            tela.print(mostra_sequencia);
+            tela.setCursor(0, 1);
+            tela.print("*Sim || Nao");
+            
             break;
           }
           else{
@@ -206,11 +309,15 @@ void percorre_perguntas(){
 
           if(pergunta %2 != 0){
             limpa_tela();
-            tela.print("Acertou!");
-            tela.setCursor(0, 1);
-            tela.print("Sim || *Nao");
+
             valida_uso[aux] = pergunta;
             aux++;
+
+            sprintf(mostra_sequencia, "Correto %d/%d", aux, 5);
+            tela.print(mostra_sequencia);
+            tela.setCursor(0, 1);
+            tela.print("Sim || *Nao");
+            
             break;
           }
           else{
@@ -230,13 +337,16 @@ void percorre_perguntas(){
           tela.print("Questao pulada");
           delay(1500);
           tempo = 0;
+
+          valida_uso[aux] = pergunta;
+          aux++;
+
           verifica_questoes_puladas ++;
           if(verifica_questoes_puladas > 1){
             aux = 10;
             limpa_tela();
             tela.print("Perdeu");
-            desiste();
-            //delay(2000);
+            desiste_inicia();
           }
 
         }
@@ -287,15 +397,19 @@ void exibe_leds(){
 }
 
 int compara (){
-  limpa_tela();
-  tela.print("Sua vez agora.");
+  
 
   int valida[TAM_LEDS];
   int cont = 0;
 
   delay(1000);
-  
+  if(avalia_jogo_leds){
+    limpa_tela();
+    tela.print("Sua vez agora.");
+  }
   while(avalia_jogo_leds){
+    
+    
 
     if(digitalRead(BOTAO_ESQUERDO) == LOW)
     {
@@ -356,113 +470,6 @@ void home(){
   tela.print("Para comecar");
 }
 
-void limpa_tela()
-{
-  tela.clear();
-  tela.setCursor(0, 0);
-}
-
-void derrota()
-{
-  musica_derrota();
-
-  limpa_tela();
-  tela.print("Errou");
-
-  avalia_jogo_leds = false;
-  avalia_jogo_perguntas = false; 
-  avalia_pergunta_final = false;
-}
-
-void vitoria()
-{
-  limpa_tela();
-  tela.print("Sucesso!");
-
-  musica_vitoria();
-  delay(4000);
-
-  avalia_jogo_perguntas = true;
-}
-
-void musica_vitoria (){
-  tone(BUZZER, 523);
-
-  delay(200);
-  noTone(BUZZER);
-
-  tone(BUZZER, 659);  
-
-  delay(200);
-  noTone(BUZZER);
-
-  tone(BUZZER, 784);  
-
-  delay(200);
-  noTone(BUZZER);
-
-  tone(BUZZER, 1046); 
-
-  delay(500);
-  noTone(BUZZER);
-
-}
-
-void musica_derrota(){
-  tone(BUZZER, 294);
-
-  delay(500);
-
-  noTone(BUZZER);
-  tone(BUZZER, 262);
-
-  delay(500);
-
-  noTone(BUZZER);
-  tone(BUZZER, 220);
-
-  delay(1000);
-
-  noTone(BUZZER);
-  
-}
-
-
-void desiste(){
-
-  if(contador == 0){
-    avalia_jogo_leds = true;
-    contador = 1;
-
-  }
-  else{
-    musica_derrota();
-
-    limpa_tela();
-    tela.print("Desistiu");
-
-    avalia_jogo_leds = false;
-    avalia_jogo_perguntas = false;
-    avalia_pergunta_final = false;
-    contador = 0;
-  }
-}
-
-void musica_tempo_acabando() {
-  int notas[] = {523, 494, 466, 440, 415, 392};
-  int duracao = 300;
-
-  for (int i = 0; i < 6; i++) {
-    tone(BUZZER, notas[i]);
-    delay(duracao);
-    noTone(BUZZER);
-    delay(100);
-    duracao -= 30;
-  }
-
-}
-
-
 void pergunta_final(){
 
   if(avalia_pergunta_final){
@@ -470,13 +477,24 @@ void pergunta_final(){
     int pergunta = TAM_PERGUNTAS - 1;
 
     limpa_tela();
+    tela.print("Fase 3/3");
+    tela.setCursor(0, 1);
+    tela.print("Pergunta Final");
+    
+    delay(1000);
+ 
+    limpa_tela();
     tela.print(perguntas[pergunta]);
+    for(int i = 0; i < 13; i++){
+      delay(300);
+      tela.scrollDisplayLeft();
+    }
 
     tela.setCursor(0, 1);
     tela.print("Sim || Nao");
     delay(2500);
     
-    while (tempo != -1 && avalia_jogo_perguntas == true)
+    while (tempo != -1 && avalia_pergunta_final == true)
     { 
       
       limpa_tela();
@@ -503,7 +521,8 @@ void pergunta_final(){
 
         tela.setCursor(0, 1);
         tela.print("*Sim || Nao");
-
+        
+        derrota();
         break;
       
       }
@@ -522,7 +541,21 @@ void pergunta_final(){
         tela.setCursor(0, 1);
         tela.print("Sim || *Nao");
 
-        derrota();
+
+        delay(1000);
+        limpa_tela();
+        tela.setCursor(0, 1);
+        vitoria();
+
+        limpa_tela();
+        tela.print("PARABENS");
+
+        tela.setCursor(0, 1);
+        tela.print("Jogo Concluido");
+
+        avalia_jogo_leds = false;
+        avalia_jogo_perguntas = false; 
+        avalia_pergunta_final = false;
       }
 
       tempo --;
