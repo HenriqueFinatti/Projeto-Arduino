@@ -33,9 +33,7 @@ String perguntas[TAM_PERGUNTAS] = {
   "75 - 24 = 49?",//nao
   "7 * 4 = 28?", //sim
   "Palmeiras tem mundial?"//nao
-  };
-
-
+};
 
 
 void setup()
@@ -60,19 +58,21 @@ void loop()
   
   home();
   
-  //inicia();  
-
-  //jogo_leds();
+  jogo_leds();
 
   jogo_perguntas();
-  
+
+  pergunta_final(); 
 }
+
 
 
 void jogo_leds()
 {
-  if(avalia_jogo_leds)
-  {
+  
+  while(avalia_jogo_leds){
+    int j = 0;
+
     limpa_tela();
     tela.print("Fase 1/3 : Leds");
     
@@ -86,8 +86,7 @@ void jogo_leds()
     preenche_aleatorio();
     exibe_leds();
     
-    limpa_tela();
-    tela.print("Sua vez agora.");
+    
     
     if(compara())
     {
@@ -98,7 +97,8 @@ void jogo_leds()
       derrota();
     }
     delay(1000);
-  
+
+    if(j == 0)break;
   }
 }
 
@@ -121,7 +121,7 @@ void percorre_perguntas(){
   int aux = 0;
   int verifica_questoes_puladas =0;
   
-  while(aux != 5 && avalia_jogo_perguntas == true)
+  while(aux < 5 && avalia_jogo_perguntas == true)
   {
     int tempo = 10;
     bool confirma = true;
@@ -153,19 +153,26 @@ void percorre_perguntas(){
 
       //nesse while true iremos, esperar o usuario selecionar a opcao de sim ou nao.
       while (tempo != -1 && avalia_jogo_perguntas == true)
-      {
+      { 
+        
         limpa_tela();
         tela.print("Tempo: ");
         tela.print(tempo);
         tela.print(" s");
         
+        if( tempo == 3) {
+          musica_tempo_acabando();
+        }
+
         delay(1000);
 
         if(digitalRead(BOTAO_ESQUERDO) == LOW){//quando o usuario clicar botao esquerdo
           tempo = 0;
           while(digitalRead(BOTAO_ESQUERDO) == LOW){//esse while funciona para se o usuario fica segurando o botao.
-            tempo = 0;
+             digitalWrite(LEDS_ESQUERDO, HIGH);
           }
+             digitalWrite(LEDS_ESQUERDO, HIGH);
+
 
           delay(500);
           if(pergunta % 2 == 0){//Se o indice for par, significa que a resposta é "sim";
@@ -192,8 +199,9 @@ void percorre_perguntas(){
         if(digitalRead(BOTAO_DIREITO) == LOW){//quando o usuario cliar no botao direito, referente ao botao não.
           tempo = 0;
           while(digitalRead(BOTAO_DIREITO) == LOW){//enquanto o usuario estiver clicando no botao, o led ficara acesso.
-            tempo = 0;
+             digitalWrite(BOTAO_DIREITO, HIGH);
           }
+           digitalWrite(BOTAO_DIREITO, HIGH);
           delay(500);
 
           if(pergunta %2 != 0){
@@ -210,7 +218,7 @@ void percorre_perguntas(){
             tela.print("Errou!");
             tela.setCursor(0, 1);
             tela.print("Sim || *Nao");
-            aux = 5;
+            aux = 10;
             break;
           }
 
@@ -224,9 +232,10 @@ void percorre_perguntas(){
           tempo = 0;
           verifica_questoes_puladas ++;
           if(verifica_questoes_puladas > 1){
-            aux =5;
+            aux = 10;
             limpa_tela();
             tela.print("Perdeu");
+            desiste();
             //delay(2000);
           }
 
@@ -248,100 +257,94 @@ void percorre_perguntas(){
 
 }
 
-
-
-void inicia(){
-  int botao_play = digitalRead(BOTAO_INICIA);
-  
-  if(botao_play == LOW)
-  {
-    digitalWrite(BOTAO_INICIA, HIGH);
-    //avalia_jogo_leds = true;
-    avalia_jogo_perguntas = true;
-  }  
-}
-
 void preenche_aleatorio(){
-  for(int i =0; i< TAM_LEDS; i++)
+  for(int i =0; i < TAM_LEDS; i++)
   {
     leds[i] = random(2);
   }
 }
 
 void exibe_leds(){
-  for(int i = 0; i < TAM_LEDS; i++)
+  int i = 0;
+  while(avalia_jogo_leds ==  true && i < TAM_LEDS)
+  {
+    if(leds[i] == 0)
     {
-      if(leds[i] == 0)
-      {
-        digitalWrite(LEDS_ESQUERDO, HIGH);
-      }
-      else
-      {
-        digitalWrite(LEDS_DIREITO, HIGH);
-      }
-      delay(1000);
-      digitalWrite(LEDS_DIREITO, LOW); 
-      digitalWrite(LEDS_ESQUERDO, LOW);
-      delay(1000);
-    
+      digitalWrite(LEDS_ESQUERDO, HIGH);
     }
+    else
+    {
+      digitalWrite(LEDS_DIREITO, HIGH);
+    }
+    delay(1000);
+    digitalWrite(LEDS_DIREITO, LOW); 
+    digitalWrite(LEDS_ESQUERDO, LOW);
+    delay(1000);
+
+    i++;
+  }
 }
 
 int compara (){
+  limpa_tela();
+  tela.print("Sua vez agora.");
+
   int valida[TAM_LEDS];
   int cont = 0;
 
   delay(1000);
   
-    while(true){
+  while(avalia_jogo_leds){
 
-      if(digitalRead(BOTAO_ESQUERDO) == LOW)
+    if(digitalRead(BOTAO_ESQUERDO) == LOW)
+    {
+      while(digitalRead(BOTAO_ESQUERDO) == LOW)
       {
-        while(digitalRead(BOTAO_ESQUERDO) == LOW)
-        {
-          digitalWrite(LEDS_ESQUERDO, HIGH);
-        }
-
-        delay(1000);
-        digitalWrite(LEDS_ESQUERDO, LOW);
-
-        if(leds[cont] == 0)
-        {
-          cont++;
-          sprintf(mostra_sequencia, "Correto %d/%d", cont, TAM_LEDS);
-          
-          limpa_tela();
-          tela.print(mostra_sequencia);
-        }
-        else return 0;
+        digitalWrite(LEDS_ESQUERDO, HIGH);
       }
 
-      if(digitalRead(BOTAO_DIREITO) == LOW)
+      delay(1000);
+      digitalWrite(LEDS_ESQUERDO, LOW);
+
+      if(leds[cont] == 0)
       {
-        while(digitalRead(BOTAO_DIREITO) == LOW)
-        {
-          digitalWrite(LEDS_DIREITO, HIGH);
-        }
+        cont++;
+        sprintf(mostra_sequencia, "Correto %d/%d", cont, TAM_LEDS);
+        
+        limpa_tela();
+        tela.print(mostra_sequencia);
+      }
+      else return 0;
+    }
 
-        delay(1000);
-        digitalWrite(LEDS_DIREITO, LOW);
-
-        if(leds[cont] == 1)
-        {
-          cont++;
-          sprintf(mostra_sequencia, "Correto %d/%d", cont, TAM_LEDS);
-
-          limpa_tela();
-          tela.print(mostra_sequencia);
-        }
-        else return 0;
-
+    if(digitalRead(BOTAO_DIREITO) == LOW)
+    {
+      while(digitalRead(BOTAO_DIREITO) == LOW)
+      {
+        digitalWrite(LEDS_DIREITO, HIGH);
       }
 
-      delay(100);
+      delay(1000);
+      digitalWrite(LEDS_DIREITO, LOW);
 
-      if(cont == TAM_LEDS) return 1;
-    }   
+      if(leds[cont] == 1)
+      {
+        cont++;
+        sprintf(mostra_sequencia, "Correto %d/%d", cont, TAM_LEDS);
+
+        limpa_tela();
+        tela.print(mostra_sequencia);
+      }
+      else return 0;
+
+    }
+
+    delay(100);
+
+    if(cont == TAM_LEDS) return 1;
+  }   
+
+  return 0;
 }
 
 void home(){
@@ -402,8 +405,6 @@ void musica_vitoria (){
   delay(500);
   noTone(BUZZER);
 
-  delay(1000);
-
 }
 
 void musica_derrota(){
@@ -423,14 +424,13 @@ void musica_derrota(){
 
   noTone(BUZZER);
   
-  delay(1000);
 }
 
 
 void desiste(){
 
   if(contador == 0){
-    avalia_jogo_perguntas = true;
+    avalia_jogo_leds = true;
     contador = 1;
 
   }
@@ -444,5 +444,90 @@ void desiste(){
     avalia_jogo_perguntas = false;
     avalia_pergunta_final = false;
     contador = 0;
+  }
+}
+
+void musica_tempo_acabando() {
+  int notas[] = {523, 494, 466, 440, 415, 392};
+  int duracao = 300;
+
+  for (int i = 0; i < 6; i++) {
+    tone(BUZZER, notas[i]);
+    delay(duracao);
+    noTone(BUZZER);
+    delay(100);
+    duracao -= 30;
+  }
+
+}
+
+
+void pergunta_final(){
+
+  if(avalia_pergunta_final){
+    int tempo = 10;
+    int pergunta = TAM_PERGUNTAS - 1;
+
+    limpa_tela();
+    tela.print(perguntas[pergunta]);
+
+    tela.setCursor(0, 1);
+    tela.print("Sim || Nao");
+    delay(2500);
+    
+    while (tempo != -1 && avalia_jogo_perguntas == true)
+    { 
+      
+      limpa_tela();
+      tela.print("Tempo: ");
+      tela.print(tempo);
+      tela.print(" s");
+      
+      if( tempo == 3) {
+        musica_tempo_acabando();
+      }
+
+      delay(1000);
+
+      if(digitalRead(BOTAO_ESQUERDO) == LOW){//quando o usuario clicar botao esquerdo
+        tempo = 0;
+        while(digitalRead(BOTAO_ESQUERDO) == LOW){//esse while funciona para se o usuario fica segurando o botao.
+           digitalWrite(LEDS_ESQUERDO, HIGH);
+        }
+        digitalWrite(LEDS_ESQUERDO, HIGH);
+        delay(500);
+
+        limpa_tela();
+        tela.print("Errou!");
+
+        tela.setCursor(0, 1);
+        tela.print("*Sim || Nao");
+
+        break;
+      
+      }
+
+      if(digitalRead(BOTAO_DIREITO) == LOW){//quando o usuario cliar no botao direito, referente ao botao não.
+        tempo = 0;
+        while(digitalRead(BOTAO_DIREITO) == LOW){//enquanto o usuario estiver clicando no botao, o led ficara acesso.
+           digitalWrite(LEDS_DIREITO, HIGH);
+        }
+        digitalWrite(LEDS_DIREITO, HIGH);
+
+        delay(500);
+
+        limpa_tela();
+        tela.print("Acertou!");
+        tela.setCursor(0, 1);
+        tela.print("Sim || *Nao");
+
+        derrota();
+      }
+
+      tempo --;
+      
+    }
+    
+    delay(3000);
   }
 }
