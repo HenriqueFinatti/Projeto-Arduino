@@ -252,21 +252,8 @@ void percorre_perguntas(){
 
 }
 
-
-
-// void inicia(){
-//   int botao_play = digitalRead(BOTAO_INICIA);
-  
-//   if(botao_play == LOW)
-//   {
-//     digitalWrite(BOTAO_INICIA, HIGH);
-//     //avalia_jogo_leds = true;
-//     avalia_jogo_perguntas = true;
-//   }  
-// }
-
 void preenche_aleatorio(){
-  for(int i =0; i< TAM_LEDS; i++)
+  for(int i =0; i < TAM_LEDS; i++)
   {
     leds[i] = random(2);
   }
