@@ -5,6 +5,8 @@ LiquidCrystal tela(13, 12, 11,10, 9, 8);
 
 bool avalia_jogo_leds = false, avalia_jogo_perguntas = false, avalia_pergunta_final = false;
 
+int contador = 0;
+
 const int TAM_LEDS = 5;
 const int TAM_PERGUNTAS = 10;
 
@@ -35,10 +37,10 @@ String perguntas[TAM_PERGUNTAS] = {
 
 
 
+
 void setup()
 {
   randomSeed(analogRead(0));
-
   pinMode(BOTAO_INICIA, INPUT_PULLUP);
   pinMode(BOTAO_DIREITO, INPUT_PULLUP);
   pinMode(BOTAO_ESQUERDO,INPUT_PULLUP);
@@ -46,18 +48,19 @@ void setup()
   pinMode(LEDS_ESQUERDO, OUTPUT);
   pinMode(LEDS_DIREITO, OUTPUT);
   
+  attachInterrupt(digitalPinToInterrupt(BOTAO_INICIA), desiste, RISING);
+
   tela.begin(16, 2);
   Serial.begin(9600);
   
 }
-
 
 void loop()
 {	
   
   home();
   
-  inicia();  
+  //inicia();  
 
   //jogo_leds();
 
@@ -118,7 +121,7 @@ void percorre_perguntas(){
   int aux = 0;
   int verifica_questoes_puladas =0;
   
-  while(aux != 5)
+  while(aux != 5 && avalia_jogo_perguntas == true)
   {
     int tempo = 10;
     bool confirma = true;
@@ -149,7 +152,7 @@ void percorre_perguntas(){
       
 
       //nesse while true iremos, esperar o usuario selecionar a opcao de sim ou nao.
-      while (tempo != -1)
+      while (tempo != -1 && avalia_jogo_perguntas == true)
       {
         limpa_tela();
         tela.print("Tempo: ");
@@ -159,15 +162,17 @@ void percorre_perguntas(){
         delay(1000);
 
         if(digitalRead(BOTAO_ESQUERDO) == LOW){//quando o usuario clicar botao esquerdo
-          tempo =0;
+          tempo = 0;
           while(digitalRead(BOTAO_ESQUERDO) == LOW){//esse while funciona para se o usuario fica segurando o botao.
-            digitalWrite(LEDS_ESQUERDO, HIGH);
+            tempo = 0;
           }
+
           delay(500);
-          digitalWrite(LEDS_ESQUERDO,LOW);
           if(pergunta % 2 == 0){//Se o indice for par, significa que a resposta é "sim";
             limpa_tela();
             tela.print("Acertou!");
+            tela.setCursor(0, 1);
+            tela.print("*Sim || Nao");
             valida_uso[aux] = pergunta;
             aux++;
             break;
@@ -175,6 +180,8 @@ void percorre_perguntas(){
           else{
             limpa_tela();
             tela.print("Errou!");
+            tela.setCursor(0, 1);
+            tela.print("*Sim || Nao");
             //confirma = false;
             aux = 5;
             //avalia_jogo_perguntas = false;
@@ -183,15 +190,17 @@ void percorre_perguntas(){
         }
 
         if(digitalRead(BOTAO_DIREITO) == LOW){//quando o usuario cliar no botao direito, referente ao botao não.
-          tempo =0;
+          tempo = 0;
           while(digitalRead(BOTAO_DIREITO) == LOW){//enquanto o usuario estiver clicando no botao, o led ficara acesso.
-            digitalWrite(LEDS_DIREITO, HIGH);
+            tempo = 0;
           }
           delay(500);
-          digitalWrite(LEDS_DIREITO, LOW); //apaga o led
+
           if(pergunta %2 != 0){
             limpa_tela();
             tela.print("Acertou!");
+            tela.setCursor(0, 1);
+            tela.print("Sim || *Nao");
             valida_uso[aux] = pergunta;
             aux++;
             break;
@@ -199,6 +208,8 @@ void percorre_perguntas(){
           else{
             limpa_tela();
             tela.print("Errou!");
+            tela.setCursor(0, 1);
+            tela.print("Sim || *Nao");
             aux = 5;
             break;
           }
@@ -245,6 +256,7 @@ void inicia(){
   if(botao_play == LOW)
   {
     digitalWrite(BOTAO_INICIA, HIGH);
+    //avalia_jogo_leds = true;
     avalia_jogo_perguntas = true;
   }  
 }
@@ -412,4 +424,25 @@ void musica_derrota(){
   noTone(BUZZER);
   
   delay(1000);
+}
+
+
+void desiste(){
+
+  if(contador == 0){
+    avalia_jogo_perguntas = true;
+    contador = 1;
+
+  }
+  else{
+    musica_derrota();
+
+    limpa_tela();
+    tela.print("Desistiu");
+
+    avalia_jogo_leds = false;
+    avalia_jogo_perguntas = false;
+    avalia_pergunta_final = false;
+    contador = 0;
+  }
 }
