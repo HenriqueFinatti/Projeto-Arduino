@@ -28,4 +28,4 @@ Para desenvolver o circuito foi necessário:
   Essa é a última fase do jogo, sendo apenas uma única pergunta de __SIM OU NÃO__ para determinar se o jogador vence o jogo ou perde e retorna desde o ínicio novamente. Nesta fase o jogador não tem a oportunidade de errar ou pular a questão. Caso ele acerte será exibido uma mensagem de sucesso junto a música representando a vitória do jogo, caso ele erre será exibido uma mensagem e musica representando a derrota
 
 ### Metodologia do Projeto ->
-  ![Imagem do projeto](C:\Users\Henrique Finatti\Pictures\Github\Projeto Arduino.png)
+  ![Imagem do projeto](img\Projeto Arduino.png)
