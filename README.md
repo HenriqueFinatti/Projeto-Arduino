@@ -1,8 +1,6 @@
-# Projeto-Arduino
-
-## Relatório do Projeto
+# Relatório do Projeto
 Nesse projeto tivemos a tarefa de desenvolver um jogo de 3 fases dentro do micro-controlador Arduíno.
-Desenvolvemos o circuito primeiramente no simulador [Link Text](#https://www.tinkercad.com) em paralelo com o código feito no Visual Studio Code.
+Desenvolvemos o circuito primeiramente no simulador [Tinkercad](https://www.tinkercad.com/) em paralelo com o código feito no Visual Studio Code.
 Após isso desenvolvemos o circuito fisicamente Com o Arduíno.
 Para desenvolver o circuito foi necessário:
 - 1   Arduino Uno
