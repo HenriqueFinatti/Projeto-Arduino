@@ -43,6 +43,6 @@ Desta enfrentamos algumas dificuldades no princípio do projeto para conseguir o
 ## Vídeo
 Para teste deixamos o led com um intervalo de 5 repetições para melhorar a vizualização:
 
-![Imagem do projeto](img/imagem1.png)
+![Video do projeto](Projeto arduino - 1728258890198.mp4)
 
 
