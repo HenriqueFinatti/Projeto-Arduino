@@ -38,4 +38,11 @@ Outra característica do projeto foi economizar a memória do Arduíno para evit
 ## Conclusao
 O projeto foi desafiador, mas conseguimos superar os problemas desenvolvendo o jogo com a lógica de dividir cada fase como um jogos independênte, controlando a progressão apenas com uma variável para cada fase
 Desta forma podemos desenvolver individualmente cada fase, o que facilitou nos testes e para ter uma experiência final mais flúida para o usuário.
-Desta enfrentamos algumas dificuldades no princípio do projeto para conseguir organizar o código de forma intuitiva e otimizada, porém essa dificuldade logo foi superada com a progressão do projeto
+Desta enfrentamos algumas dificuldades no princípio do projeto para conseguir organizar o código de forma intuitiva e otimizada, porém essa dificuldade logo foi superada com a progressão do projeto.
+
+## Vídeo
+Para teste deixamos o led com um intervalo de 5 repetições para melhorar a vizualização:
+
+![Imagem do projeto](img/imagem1.png)
+
+
